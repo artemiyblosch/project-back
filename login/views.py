@@ -1,4 +1,6 @@
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpRequest
+from django.views.decorators.csrf import csrf_protect
 
-def index(request):
-    return HttpResponse("HELLO!!!")
+@csrf_protect
+def echo(request : HttpRequest):
+    return JsonResponse(eval(request.body.decode("utf-8")))

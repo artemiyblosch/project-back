@@ -34,7 +34,7 @@ class Group(models.Model):
 class Message(models.Model):
     text = models.CharField(max_length=65536)
     owner = models.ForeignKey("User",related_name="messages",on_delete=models.SET_NULL,null=True)
-    referants = models.ManyToManyField("User", related_name="refered_in", null=True)
+    referants = models.ManyToManyField("User", related_name="refered_in")
     group = models.ForeignKey("Group", on_delete = models.CASCADE, related_name="messages")
 
     def __str__(self):
