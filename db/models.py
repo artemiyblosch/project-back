@@ -4,6 +4,7 @@ from typing import Self
 
 class User(models.Model):
     name = models.CharField(max_length=64)
+    password = models.CharField(max_length=4096)
     tag = models.CharField(max_length=32)
 
     def __str__(self):
@@ -15,7 +16,10 @@ class User(models.Model):
         for i in re.finditer(r'@\S+',text):
             m.referants.add(User.objects.filter(tag=i.group()[1:])[0])
         return m
-    
+
+    def json(self):
+        return {"name": self.name, "password": self.password, "tag": self.tag}
+
     @staticmethod
     def find_by_tag(tag : str) -> Self:
         return User.objects.filter(tag=tag)[0]

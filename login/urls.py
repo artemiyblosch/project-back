@@ -3,5 +3,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.echo, name="echo")
+    path("", views.auth, name="auth")
 ]
