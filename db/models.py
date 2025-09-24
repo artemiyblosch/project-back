@@ -18,7 +18,10 @@ class User(U):
         return m
 
     def json(self):
-        return {"name": self.name, "password": self.password, "tag": self.tag}
+        return self.safe_json() | {"password": self.password}
+    
+    def safe_json(self):
+        return {"name" : self.name, "tag": self.tag}
 
     @staticmethod
     def find_by_tag(tag : str) -> Self:
