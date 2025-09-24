@@ -1,11 +1,11 @@
 from django.db import models
 import re
 from typing import Self
+from django.contrib.auth.models import AbstractBaseUser as U
 
-class User(models.Model):
-    name = models.CharField(max_length=64)
-    password = models.CharField(max_length=4096)
+class User(U):
     tag = models.CharField(max_length=32)
+    name = models.CharField(max_length=1024)
 
     def __str__(self):
         return f"@{self.tag}"
@@ -26,7 +26,7 @@ class User(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=64)
-    members = models.ManyToManyField("User",related_name="groups")
+    members = models.ManyToManyField("User",related_name="member_in")
 
     def add_member(self,user : User):
         user.groups.add(self)
