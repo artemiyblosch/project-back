@@ -1,7 +1,10 @@
 from django.db import models
 import re
+from django.db.models import Q
 from typing import Self
 from django.contrib.auth.models import AbstractBaseUser as U
+from django.http import HttpRequest
+import json
 
 class User(U):
     tag = models.CharField(max_length=32)
@@ -9,6 +12,16 @@ class User(U):
 
     def __str__(self):
         return f"@{self.tag}"
+    
+    @staticmethod
+    def strict_find(req : HttpRequest, keys : list[str]):
+        req_in_json : dict = json.loads(req.body)
+        for key in keys:
+            if key not in req_in_json: 
+                print(key)
+                return None
+
+        return User.objects.filter(**req_in_json)
     
     def text(self, group, text : str):
         m = Message(text=text, owner=self, group=group)
@@ -18,7 +31,7 @@ class User(U):
         return m
 
     def json(self):
-        return self.safe_json() | {"password": self.password}
+        return self.safe_json() | {"password": self.password, "pk": self.pk}
     
     def safe_json(self):
         return {"name" : self.name, "tag": self.tag}
@@ -35,6 +48,9 @@ class Group(models.Model):
         user.groups.add(self)
         self.members.add(user)
 
+    def json(self):
+        return {"pk": self.pk, "name": self.name, "members": [i.tag for i in self.members.all()]}
+    
     def __str__(self):
         return f"{self.name}"
     
