@@ -50,6 +50,16 @@ class Group(models.Model):
     def json(self):
         return {"pk": self.pk, "name": self.name, "members": [i.tag for i in self.members.all()]}
     
+    @staticmethod
+    def strict_find(req : HttpRequest, keys : list[str]):
+        req_in_json : dict = json.loads(req.body)
+
+        try:
+            filter_query = {i: req_in_json[i] for i in keys}
+            return Group.objects.filter(**filter_query)
+        except KeyError:
+            return None
+
     def __str__(self):
         return f"{self.name}"
     
