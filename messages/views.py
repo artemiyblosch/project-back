@@ -1,6 +1,6 @@
 from django.http import HttpRequest, \
     HttpResponse, HttpResponseBadRequest, \
-    JsonResponse, HttpResponseNotFound
+    JsonResponse#, HttpResponseNotFound
 from db.models import User, Group, Message
 import json
 
@@ -12,7 +12,11 @@ def text(request : HttpRequest) -> HttpResponse:
 
     try:
         group = Group.objects.filter(pk = (req:=json.loads(request.body))["group_pk"])[0]
-
+        match req['vibes']:
+            case 0: group.vibe_ct += 1
+            case 1: group.vibe_cl += 1
+            case 2: group.vibe_sd += 1
+        
         user.text(group,req["text"],req["type"])
         return JsonResponse({})
     except KeyError:

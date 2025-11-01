@@ -52,15 +52,19 @@ class Group(models.Model):
     
     def vibe(self):
         if self.vibe_ct == self.vibe_cl == self.vibe_sd: return 3
-        
+
         m = max(self.vibe_ct,self.vibe_cl,self.vibe_sd)
         if m == self.vibe_sd: return 2
         if m == self.vibe_cl: return 1
         return 0
 
     def json(self):
-        return {"pk": self.pk, "name": self.name, "members": [i.tag for i in self.members.all()]}
+        return {"pk": self.pk, "name": self.name,\
+                "members": [i.tag for i in self.members.all()], "vibe" : self.vibe()}
     
+    def short_json(self):
+        return {"pk" : self.pk}
+
     @staticmethod
     def strict_find(req : HttpRequest, keys : list[str]):
         req_in_json : dict = json.loads(req.body)
@@ -85,4 +89,4 @@ class Message(models.Model):
         return f"{self.owner} in {self.group.name}: {self.text}"
     
     def json(self):
-        return {"text" : self.text, "owner" : self.owner.safe_json(), "group" : self.group.json(), "type" : self.type}
+        return {"text" : self.text, "owner" : self.owner.safe_json(), "group" : self.group.short_json(), "type" : self.type}
