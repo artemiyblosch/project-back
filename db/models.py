@@ -42,10 +42,21 @@ class User(U):
 class Group(models.Model):
     name = models.CharField(max_length=64)
     members = models.ManyToManyField("User",related_name="member_in")
+    vibe_ct = models.IntegerField(default=0)
+    vibe_cl = models.IntegerField(default=0)
+    vibe_sd = models.IntegerField(default=0)
 
     def add_member(self,user : User):
         user.groups.add(self)
         self.members.add(user)
+    
+    def vibe(self):
+        if self.vibe_ct == self.vibe_cl == self.vibe_sd: return 3
+        
+        m = max(self.vibe_ct,self.vibe_cl,self.vibe_sd)
+        if m == self.vibe_sd: return 2
+        if m == self.vibe_cl: return 1
+        return 0
 
     def json(self):
         return {"pk": self.pk, "name": self.name, "members": [i.tag for i in self.members.all()]}
