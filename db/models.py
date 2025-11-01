@@ -22,8 +22,8 @@ class User(U):
         except KeyError:
             return None
     
-    def text(self, group, text : str):
-        m = Message(text=text, owner=self, group=group)
+    def text(self, group, text : str, type : int):
+        m = Message(text=text, owner=self, group=group, type=type)
         m.save()
         #for i in re.finditer(r'@\S+',text):
             #m.referants.add(User.objects.filter(tag=i.group()[1:])[0])
@@ -68,9 +68,10 @@ class Message(models.Model):
     owner = models.ForeignKey("User",related_name="messages",on_delete=models.SET_NULL,null=True)
     #referants = models.ManyToManyField("User", related_name="refered_in")
     group = models.ForeignKey("Group", on_delete = models.CASCADE, related_name="messages")
+    type = models.PositiveSmallIntegerField()
 
     def __str__(self):
         return f"{self.owner} in {self.group.name}: {self.text}"
     
     def json(self):
-        return {"text" : self.text, "owner" : self.owner.safe_json(), "group" : self.group.json()}
+        return {"text" : self.text, "owner" : self.owner.safe_json(), "group" : self.group.json(), "type" : self.type}
