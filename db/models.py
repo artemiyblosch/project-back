@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractBaseUser as U
 from django.http import HttpRequest
 import json
 
+def default_d():
+    return {"ct": 0, "cool": 0, "sad": 0}
+
 class User(U):
     tag = models.CharField(max_length=32)
     name = models.CharField(max_length=1024)
@@ -42,25 +45,26 @@ class User(U):
 class Group(models.Model):
     name = models.CharField(max_length=64)
     members = models.ManyToManyField("User",related_name="member_in")
-    vibe_ct = models.IntegerField(default=0)
-    vibe_cl = models.IntegerField(default=0)
-    vibe_sd = models.IntegerField(default=0)
+    vibes = models.JSONField(default=default_d)
+    main_vibe = models.CharField(max_length=64, default="")
 
     def add_member(self,user : User):
         user.groups.add(self)
         self.members.add(user)
     
-    def vibe(self):
-        if self.vibe_ct == self.vibe_cl == self.vibe_sd: return 3
-
-        m = max(self.vibe_ct,self.vibe_cl,self.vibe_sd)
-        if m == self.vibe_sd: return 2
-        if m == self.vibe_cl: return 1
-        return 0
+    def update_vibe(self):
+        m = max(self.vibes, key=self.vibes.get)
+        if self.main_vibe == "":
+            self.main_vibe = m
+        elif self.vibes[self.main_vibe] + 20 <= self.vibes[m]:
+            self.main_vibe = m
+        return self
 
     def json(self):
         return {"pk": self.pk, "name": self.name,\
-                "members": [i.tag for i in self.members.all()], "vibe" : self.vibe()}
+                "members": [i.tag for i in self.members.all()], 
+                "vibes" : self.vibes, 
+                "main_vibe" : self.main_vibe}
     
     def short_json(self):
         return {"pk" : self.pk}
