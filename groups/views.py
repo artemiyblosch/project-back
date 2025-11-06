@@ -12,12 +12,18 @@ def get_by_pk(request : HttpRequest) -> HttpResponse:
     return Http404()
 
 def set_vibes(request : HttpRequest) -> HttpResponse:
-    g : Group = Group.strict_find(request, ["pk"])
-    req = json.loads(request.body)
+    print("O"*1000000)
+    g : Group = Group.strict_find(request, ["pk"])[0]
+    if g == None: return HttpResponseBadRequest()
 
-    g.vibes["ct"] = req["ct"]
-    g.vibes["cool"] = req["cool"]
-    g.vibes["sad"] = req["sad"]
-    g.update_vibe().save()
+    try:
+        req = json.loads(request.body)
+
+        g.vibes["ct"] = int(req["ct"])
+        g.vibes["cool"] = int(req["cool"])
+        g.vibes["sad"] = int(req["sad"])
+        g.update_vibe().save()
+    except KeyError:
+        return HttpResponseBadRequest()
 
     return JsonResponse({"main_vibe": g.main_vibe})
