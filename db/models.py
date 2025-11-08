@@ -11,6 +11,7 @@ def default_d():
 class User(U):
     tag = models.CharField(max_length=32)
     name = models.CharField(max_length=1024)
+    USERNAME_FIELD = "name"
 
     def __str__(self):
         return f"@{self.tag}"
