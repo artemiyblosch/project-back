@@ -1,7 +1,7 @@
 from django.http import HttpRequest, \
     HttpResponse, HttpResponseBadRequest, \
     JsonResponse, HttpResponseNotFound
-from db.models import User, Group, Message
+from db.models import User, Group, Message, Sticker
 import json
 
 def text(request : HttpRequest) -> HttpResponse:
@@ -12,13 +12,19 @@ def text(request : HttpRequest) -> HttpResponse:
 
     try:
         group = Group.objects.filter(pk = (req:=json.loads(request.body))["group_pk"])[0]
-        if req["vibe"] != "": group.vibes[req["vibe"]] += 1
-        group.update_vibe().save()
+        if req["type"] != 2:
+            user.text(group,req["text"],req["type"])
+            return JsonResponse({})
         
-        user.text(group,req["text"],req["type"])
-        return JsonResponse({})
+        sticker = Sticker.objects.get(pk=int(req["text"]))
+        group.vibes[sticker.vibe]
+        group.update_vibe().save()
+
+        user.text(group, sticker.image, 2)
     except KeyError:
         return HttpResponseBadRequest()
+    
+    return JsonResponse({})
 
 def get_from_group(request : HttpRequest) -> HttpResponse:
     req = json.loads(request.body)

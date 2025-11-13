@@ -95,3 +95,10 @@ class Message(models.Model):
     
     def json(self):
         return {"text" : self.text, "owner" : self.owner.safe_json(), "group" : self.group.short_json(), "type" : self.type}
+
+class Sticker(models.Model):
+    image = models.CharField(max_length=2**32)
+    vibe = models.CharField(max_length=64)
+
+    def json(self):
+        return {"image" : self.image, "pk" : self.pk, "vibe" : self.vibe}
