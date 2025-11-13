@@ -23,5 +23,5 @@ urlpatterns = [
     path('users', include("users.urls")),
     path('messages', include("messages.urls")),
     path('groups', include("groups.urls")),
-    path('sticker', include("stickers.urls"))
+    path('sticker', include("stickers.urls")),
 ]
