@@ -17,7 +17,7 @@ def text(request : HttpRequest) -> HttpResponse:
             return JsonResponse({})
         
         sticker = Sticker.objects.get(pk=int(req["text"]))
-        group.vibes[sticker.vibe]
+        group.vibes[sticker.vibe] += 1
         group.update_vibe().save()
 
         user.text(group, sticker.image, 2)
