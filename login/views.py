@@ -2,10 +2,8 @@ from django.http import JsonResponse,\
     HttpRequest, \
     HttpResponseBadRequest, \
     HttpResponseForbidden
-from django.views.decorators.csrf import csrf_protect
 from db.models import User
 
-@csrf_protect
 def auth(request : HttpRequest):
     u = User.strict_find(request,["tag","password"])
 
