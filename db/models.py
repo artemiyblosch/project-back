@@ -57,7 +57,7 @@ class Group(models.Model):
         m = max(self.vibes, key=self.vibes.get)
         if self.main_vibe == "":
             self.main_vibe = m
-        elif self.vibes[self.main_vibe] + 20 <= self.vibes[m]:
+        elif self.vibes[self.main_vibe] + 5 <= self.vibes[m]:
             self.main_vibe = m
         return self
 
