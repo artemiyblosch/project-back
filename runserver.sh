@@ -1,1 +1,2 @@
-python3 manage.py runserver
+/home/ubuntu/bin/python manage.py runserver
+
