@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/messages/', include("messages.urls")),
     path('api/groups/', include("groups.urls")),
     path('api/sticker/', include("stickers.urls")),
+    path('api/files/',include("filesystem.urls")),
 ]
